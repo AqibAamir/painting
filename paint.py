@@ -64,3 +64,55 @@ class SimpleDrawApp:
 
         self.line_radio = tk.Radiobutton(self.toolbar, text="Line", variable=self.tool_var, value="line", command=self.change_tool)
         self.line_radio.pack(side=tk.LEFT, padx=5)
+
+
+        self.rect_radio = tk.Radiobutton(self.toolbar, text="Rectangle", variable=self.tool_var, value="rectangle", command=self.change_tool)
+        self.rect_radio.pack(side=tk.LEFT, padx=5)
+
+        self.oval_radio = tk.Radiobutton(self.toolbar, text="Oval", variable=self.tool_var, value="oval", command=self.change_tool)
+        self.oval_radio.pack(side=tk.LEFT, padx=5)
+
+        self.text_radio = tk.Radiobutton(self.toolbar, text="Text", variable=self.tool_var, value="text", command=self.change_tool)
+        self.text_radio.pack(side=tk.LEFT, padx=5)
+
+        self.polygon_radio = tk.Radiobutton(self.toolbar, text="Polygon", variable=self.tool_var, value="polygon", command=self.change_tool)
+        self.polygon_radio.pack(side=tk.LEFT, padx=5)
+
+        self.triangle_radio = tk.Radiobutton(self.toolbar, text="Triangle", variable=self.tool_var, value="triangle", command=self.change_tool)
+        self.triangle_radio.pack(side=tk.LEFT, padx=5)
+
+        self.pentagon_radio = tk.Radiobutton(self.toolbar, text="Pentagon", variable=self.tool_var, value="pentagon", command=self.change_tool)
+        self.pentagon_radio.pack(side=tk.LEFT, padx=5)
+
+        # Additional Buttons
+        self.fill_button = tk.Button(self.toolbar, text="Fill", command=self.fill_color)
+        self.fill_button.pack(side=tk.LEFT, padx=5)
+
+        self.clear_button = tk.Button(self.toolbar, text="Clear", command=self.clear_canvas)
+        self.clear_button.pack(side=tk.LEFT, padx=5)
+
+        self.undo_button = tk.Button(self.toolbar, text="Undo", command=self.undo)
+        self.undo_button.pack(side=tk.LEFT, padx=5)
+
+        self.redo_button = tk.Button(self.toolbar, text="Redo", command=self.redo)
+        self.redo_button.pack(side=tk.LEFT, padx=5)
+
+        self.save_button = tk.Button(self.toolbar, text="Save", command=self.save_canvas)
+        self.save_button.pack(side=tk.LEFT, padx=5)
+
+        self.load_button = tk.Button(self.toolbar, text="Load", command=self.load_canvas)
+        self.load_button.pack(side=tk.LEFT, padx=5)
+
+        self.smooth_label = tk.Label(self.toolbar, text="Smooth:")
+        self.smooth_label.pack(side=tk.LEFT, padx=5)
+
+        self.smooth_var = tk.BooleanVar(value=True)
+        self.smooth_check = tk.Checkbutton(self.toolbar, variable=self.smooth_var, command=self.toggle_smooth)
+        self.smooth_check.pack(side=tk.LEFT, padx=5)
+
+        self.grid_button = tk.Button(self.toolbar, text="Toggle Grid", command=self.toggle_grid)
+        self.grid_button.pack(side=tk.LEFT, padx=5)
+
+        # Initialize grid settings
+        self.grid_size = 20
+        self.show_grid = False

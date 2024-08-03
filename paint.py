@@ -116,3 +116,68 @@ class SimpleDrawApp:
         # Initialize grid settings
         self.grid_size = 20
         self.show_grid = False
+
+
+    def setup_canvas(self):
+        # Set up the drawing canvas
+        self.canvas = tk.Canvas(self.root, bg="white")
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+        self.canvas.bind("<B1-Motion>", self.paint)
+        self.canvas.bind("<ButtonRelease-1>", self.reset)
+        self.canvas.bind("<Button-1>", self.start_draw)
+        self.old_x = None
+        self.old_y = None
+
+    def setup_status_bar(self):
+        # Create and pack the status bar
+        self.status_bar = tk.Label(self.root, text="Brush: black", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
+    def setup_keyboard_shortcuts(self):
+        # Define keyboard shortcuts
+        self.root.bind("<Control-z>", lambda event: self.undo())
+        self.root.bind("<Control-y>", lambda event: self.redo())
+        self.root.bind("<Control-s>", lambda event: self.save_canvas())
+        self.root.bind("<Control-o>", lambda event: self.load_canvas())
+        self.root.bind("<Control-q>", lambda event: self.root.quit())
+
+    def choose_color(self):
+        # Open a color chooser dialog and set the selected color
+        self.color = askcolor(color=self.color)[1]
+        self.update_status_bar()
+
+    def change_size(self, value):
+        # Change the brush size based on slider input
+        self.brush_size = int(value)
+
+    def change_brush(self):
+        # Update the brush type
+        self.brush_type = self.brush_var.get()
+        if self.brush_type not in {"butt", "projecting", "round"}:
+            self.brush_type = "round"  # Default to a valid brush type
+        self.update_status_bar()
+
+    def change_tool(self):
+        # Update the current drawing tool
+        self.tool = self.tool_var.get()
+        self.update_status_bar()
+
+    def clear_canvas(self):
+        # Clear the canvas and reset history
+        self.canvas.delete("all")
+        self.history = []
+        self.redo_stack = []
+
+    def undo(self):
+        # Undo the last action
+        if self.history:
+            last_item = self.history.pop()
+            self.redo_stack.append(last_item)
+            self.canvas.delete(last_item)
+
+    def redo(self):
+        # Redo the last undone action
+        if self.redo_stack:
+            item = self.redo_stack.pop()
+            self.history.append(item)
+            self.canvas.itemconfig(item, state="normal")

@@ -293,3 +293,61 @@ class SimpleDrawApp:
                     outline=self.color, width=self.brush_size, fill=''
                 )
             elif self.tool == "pentagon":
+                    self.current_item = self.canvas.create_polygon(
+                    self.old_x, self.old_y,
+                    self.old_x + (event.x - self.old_x) // 2, event.y,
+                    self.old_x - (event.x - self.old_x) // 2, event.y,
+                    self.old_x - (event.x - self.old_x), self.old_y + (event.y - self.old_y) // 2,
+                    self.old_x + (event.x - self.old_x), self.old_y + (event.y - self.old_y) // 2,
+                    outline=self.color, width=self.brush_size, fill=''
+                )
+
+    def draw_text(self, event):
+        # Draw text at the specified location
+        text = askstring("Text", "Enter text:")
+        if text:
+            item = self.canvas.create_text(
+                event.x, event.y, text=text, fill=self.color,
+                font=("Arial", self.brush_size * 2)
+            )
+            self.history.append(item)
+
+    def fill_color(self, event=None):
+        # Fill color in shapes
+        if event:
+            item = self.canvas.find_closest(event.x, event.y)
+            self.canvas.itemconfig(item, fill=self.color)
+
+    def reset(self, event):
+        # Reset drawing state
+        self.old_x = None
+        self.old_y = None
+        if self.current_item:
+            self.history.append(self.current_item)
+            self.current_item = None
+
+    def update_status_bar(self):
+        # Update status bar with current tool and color
+        self.status_bar.config(text=f"Tool: {self.tool.capitalize()}, Color: {self.color}")
+
+    def update_status_bar(self):
+        # Update status bar with current tool, color, and brush size
+        self.status_bar.config(text=f"Tool: {self.tool.capitalize()}, Color: {self.color}, Size: {self.brush_size}")
+
+    def draw_shape(self, event):
+        # Draw various shapes
+        if self.old_x and self.old_y:
+            if self.current_item:
+                self.canvas.delete(self.current_item)
+            if self.tool == "line":
+                self.current_item = self.canvas.create_line(
+                    self.old_x, self.old_y, event.x, event.y,
+                    width=self.brush_size, fill=self.color
+                )
+            elif self.tool == "rectangle":
+                self.current_item = self.canvas.create_rectangle(
+                    self.old_x, self.old_y, event.x, event.y,
+                    outline=self.color, width=self.brush_size, fill=self.color
+                )
+            elif self.tool == "oval":
+                self.current_item = self.canvas.create_oval(

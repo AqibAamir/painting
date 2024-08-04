@@ -181,3 +181,62 @@ class SimpleDrawApp:
             item = self.redo_stack.pop()
             self.history.append(item)
             self.canvas.itemconfig(item, state="normal")
+
+
+    def save_canvas(self):
+        # Save the canvas content as a PostScript file
+        file_path = filedialog.asksaveasfilename(defaultextension=".ps", filetypes=[("PostScript files", "*.ps")])
+        if file_path:
+            self.canvas.postscript(file=file_path, colormode="color")
+
+    def load_canvas(self):
+        # Load the canvas content from a PostScript file
+        file_path = filedialog.askopenfilename(filetypes=[("PostScript files", "*.ps")])
+        if file_path:
+            os.system(f"gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pngalpha -sOutputFile=temp.png {file_path}")
+            self.canvas.delete("all")
+            self.image = tk.PhotoImage(file="temp.png")
+            self.canvas.create_image(0, 0, anchor=tk.NW, image=self.image)
+            os.remove("temp.png")
+
+    def toggle_smooth(self):
+        # Toggle smooth drawing
+        self.update_status_bar()
+
+    def toggle_grid(self):
+        # Toggle grid visibility
+        self.show_grid = not self.show_grid
+        self.draw_grid()
+
+    def draw_grid(self):
+        # Draw or remove grid lines based on current state
+        if self.show_grid:
+            for i in range(0, self.canvas.winfo_width(), self.grid_size):
+                self.canvas.create_line(i, 0, i, self.canvas.winfo_height(), fill="lightgray", tags="grid_line")
+            for i in range(0, self.canvas.winfo_height(), self.grid_size):
+                self.canvas.create_line(0, i, self.canvas.winfo_width(), i, fill="lightgray", tags="grid_line")
+        else:
+            self.canvas.delete("grid_line")
+
+    def start_draw(self, event):
+        # Start drawing based on selected tool
+        if self.tool == "polygon":
+            if self.old_x and self.old_y:
+                item = self.canvas.create_line(self.old_x, self.old_y, event.x, event.y, fill=self.color, width=self.brush_size)
+                self.history.append(item)
+                self.old_x, self.old_y = event.x, event.y
+            else:
+                self.old_x, self.old_y = event.x, event.y
+
+    def paint(self, event):
+        # Paint or draw shapes based on selected tool
+        if self.tool == "brush":
+            self.draw_brush(event)
+        elif self.tool == "eraser":
+            self.erase(event)
+        elif self.tool in {"line", "rectangle", "oval", "triangle", "pentagon"}:
+            self.draw_shape(event)
+        elif self.tool == "text":
+            self.draw_text(event)
+        elif self.tool == "fill":
+            self.fill_color(event)

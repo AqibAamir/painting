@@ -351,3 +351,47 @@ class SimpleDrawApp:
                 )
             elif self.tool == "oval":
                 self.current_item = self.canvas.create_oval(
+                    self.old_x, self.old_y, event.x, event.y,
+                    outline=self.color, width=self.brush_size, fill=self.color
+                )
+            elif self.tool == "triangle":
+                self.current_item = self.canvas.create_polygon(
+                    self.old_x, self.old_y, event.x, event.y,
+                    self.old_x - (event.x - self.old_x), event.y,
+                    outline=self.color, width=self.brush_size, fill=self.color
+                )
+            elif self.tool == "pentagon":
+                self.current_item = self.canvas.create_polygon(
+                    self.old_x, self.old_y,
+                    self.old_x + (event.x - self.old_x) // 2, event.y,
+                    self.old_x - (event.x - self.old_x) // 2, event.y,
+                    self.old_x - (event.x - self.old_x), self.old_y + (event.y - self.old_y) // 2,
+                    self.old_x + (event.x - self.old_x), self.old_y + (event.y - self.old_y) // 2,
+                    outline=self.color, width=self.brush_size, fill=self.color
+                )
+
+    def fill_color(self, event=None):
+        # Fill color in shapes
+        if event:
+            item = self.canvas.find_closest(event.x, event.y)
+            if self.canvas.type(item) in ("rectangle", "oval", "polygon"):
+                self.canvas.itemconfig(item, fill=self.color)
+
+    def draw_grid(self):
+        # Draw or remove grid lines based on current state
+        if self.show_grid:
+            self.canvas.delete("grid_line")
+            for i in range(0, self.canvas.winfo_width(), self.grid_size):
+                self.canvas.create_line(i, 0, i, self.canvas.winfo_height(), fill="lightgray", tags="grid_line")
+            for i in range(0, self.canvas.winfo_height(), self.grid_size):
+                self.canvas.create_line(0, i, self.canvas.winfo_width(), i, fill="lightgray", tags="grid_line")
+        else:
+            self.canvas.delete("grid_line")
+
+    def toggle_smooth(self):
+        # Toggle smooth drawing
+        self.update_status_bar()
+
+    def update_status_bar(self):
+        # Update status bar with current tool, color, and brush size
+        self.status_bar.config(text=f"Tool: {self.tool.capitalize()}, Color: {self.color}, Size: {self.brush_size}")

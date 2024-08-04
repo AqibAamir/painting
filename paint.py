@@ -240,3 +240,56 @@ class SimpleDrawApp:
             self.draw_text(event)
         elif self.tool == "fill":
             self.fill_color(event)
+
+
+    def draw_brush(self, event):
+        # Draw brush strokes
+        if self.old_x and self.old_y:
+            item = self.canvas.create_line(
+                self.old_x, self.old_y, event.x, event.y,
+                width=self.brush_size, fill=self.color,
+                capstyle=self.brush_type, smooth=self.smooth_var.get()
+            )
+            self.history.append(item)
+        self.old_x = event.x
+        self.old_y = event.y
+
+    def erase(self, event):
+        # Draw eraser strokes
+        if self.old_x and self.old_y:
+            item = self.canvas.create_line(
+                self.old_x, self.old_y, event.x, event.y,
+                width=self.brush_size, fill="white",
+                capstyle=self.brush_type, smooth=self.smooth_var.get()
+            )
+            self.history.append(item)
+        self.old_x = event.x
+        self.old_y = event.y
+
+    def draw_shape(self, event):
+        # Draw various shapes
+        if self.old_x and self.old_y:
+            if self.current_item:
+                self.canvas.delete(self.current_item)
+            if self.tool == "line":
+                self.current_item = self.canvas.create_line(
+                    self.old_x, self.old_y, event.x, event.y,
+                    width=self.brush_size, fill=self.color
+                )
+            elif self.tool == "rectangle":
+                self.current_item = self.canvas.create_rectangle(
+                    self.old_x, self.old_y, event.x, event.y,
+                    outline=self.color, width=self.brush_size
+                )
+            elif self.tool == "oval":
+                self.current_item = self.canvas.create_oval(
+                    self.old_x, self.old_y, event.x, event.y,
+                    outline=self.color, width=self.brush_size
+                )
+            elif self.tool == "triangle":
+                self.current_item = self.canvas.create_polygon(
+                    self.old_x, self.old_y, event.x, event.y,
+                    self.old_x - (event.x - self.old_x), event.y,
+                    outline=self.color, width=self.brush_size, fill=''
+                )
+            elif self.tool == "pentagon":

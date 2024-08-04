@@ -395,3 +395,29 @@ class SimpleDrawApp:
     def update_status_bar(self):
         # Update status bar with current tool, color, and brush size
         self.status_bar.config(text=f"Tool: {self.tool.capitalize()}, Color: {self.color}, Size: {self.brush_size}")
+
+
+    def start_draw(self, event):
+        # Start drawing based on selected tool
+        if self.tool in {"line", "rectangle", "oval", "triangle", "pentagon"}:
+            self.old_x, self.old_y = event.x, event.y
+            self.current_item = None
+        elif self.tool == "text":
+            self.draw_text(event)
+        elif self.tool == "fill":
+            self.fill_color(event)
+
+    def draw_text(self, event):
+        # Draw text at the specified location
+        text = askstring("Text", "Enter text:")
+        if text:
+            item = self.canvas.create_text(
+                event.x, event.y, text=text, fill=self.color,
+                font=("Arial", self.brush_size * 2)
+            )
+            self.history.append(item)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = SimpleDrawApp(root)
+    root.mainloop()
